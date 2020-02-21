@@ -69,8 +69,10 @@ export class UserService {
     }
 
   }
-  async updatePassword( id: number, newPassword: number ): Promise<object> {
+  async updatePassword( id: number, newPassword: string ): Promise<object> {
     try{
+      if(!config.PASSWORD_REG_EXP.test(newPassword))
+        throw {error: true, message: 'The password is not valid.'};
       const hashPassword = await hash(newPassword, 10);
       return Users.update({ password: hashPassword }, {where: {id}, fields: ['password'], returning: true});
     } catch (e) {
