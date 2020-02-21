@@ -3,6 +3,7 @@ import { hash, compare } from 'bcrypt';
 import {Users} from '../../../models';
 import { Injectable } from '@nestjs/common';
 import emailInitializer from './helper';
+import config from './../../config'
 
 interface UserInterface {
   id?: number,
@@ -17,6 +18,11 @@ const transporter =  emailInitializer();
 export class UserService {
   async createUser(username: string, email: string, password: string): Promise<UserInterface> {
     try{
+      if(!config.PASSWORD_REG_EXP.test(password))
+        throw {error: true, message: 'The password is not valid.'};
+      if(!config.EMAIL_REG_EXP.test(email))
+        throw {error: true, message: 'The email is not valid.'};
+
       const hashPassword = await hash(password, 10);
       return Users.create({ username, email, password: hashPassword });
     } catch (e) {

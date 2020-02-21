@@ -18,6 +18,8 @@ export class Userontroller {
       })
     } catch (e) {
       console.log(e);
+      if(e.error)
+        return res.send(e);
       return res.send('internal server error')
     }
 
